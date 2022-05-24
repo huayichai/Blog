@@ -88,7 +88,7 @@ count：记录当前Filter共计已存储元素的数量
 
 ![](.\img\Snipaste_2022-05-24_15-47-19.png)
 
-![](D:\Data\Blog\Invertbile Bloom Filters\img\Snipaste_2022-05-24_17-25-41.png)
+![](.\img\Snipaste_2022-05-24_17-25-41.png)
 
 根据伪代码可以看出，思路与CBF非常像。每次插入元素：
 
