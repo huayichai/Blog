@@ -185,6 +185,82 @@ PGM的空间消耗不是线性增长的，而是跟数据的分布趋势有关�
 
 
 
+## 4 Compressed PGM-Index
+
+*注：由于文章篇幅的原因，论文中变体使用的技术没有详细展开，而是让读者自行参考其他论文。*
+
+本章主要介绍PGM-Index的变体：压缩的PGM-Index
+
+压缩PGM-Index的关键是提供一个对key，slope，intercept的无损压缩算法
+
+> 原文说：由于对key的压缩算法已经很成熟了，让我们自行参考文献
+>
+> A. Moat and A. Turpin. Compression and Coding Algorithms. Springer, Boston, MA, USA, 2002.
+>
+> G. Navarro. Compact data structures: A practical approach. Cambridge University Press, New York, NY, USA, 2016.
+
+
+
+**压缩intercept**
+
+前面FITing-Tree中的截距intercept的定义跟y=ax+b中的b的意思是相同的，即当x=0的时候y的值代表截距。
+
+这里为了压缩，改变了截距的定义。即，对于一个段$S_j=(key_j, slope_j, intercept_j)$，希望在段的坐标系里，$intercept_j$是递增的。
+
+为了满足这个递增的条件，我们在根据输入k计算其位置pos的公式要改变为：$f_{s_j}(k)=(k-key_j)\times slopes_j+intercepts_j$，可以与前文的公式对比一下，这里多了$k-key_j$这样一个步骤，这样的话，就可以保证每个段的$intercepts_j$是递增的。
+
+最后，文章又强调了intercepts是小于n的。
+
+然后，让读者自行参考下文的提出的简洁数据结构，用该数据结构来存储所有的intercepts，空间是$mlog(n/m)+1.92m+O(m)$ bits，随机访问时间是O(1)
+
+>  D. Okanohara and K. Sadakane. Practical entropy-compressed rank/select dictionary. In Proceedings of the SIAM Meeting on Algorithm Engineering & Expermiments, pages 60-70, Philadelphia, PA, USA, 2007.
+
+
+
+**压缩slope**
+
+每个段的斜率可以在一个区间内取值！（阅读FITing-Tree的论文可知求出的每个段，都有自己的斜率区间slope intervals，即[最小斜率，最大斜率]）
+
+在本文中，求出的m个optimal segments的斜率区间为$I_0=(a_0,b_0),...,I_{m-1}=(a_{m-1},b_{m-1})$ ，因此，原本每个段的斜率$slope_j$属于斜率区间$I_j$，其中$j=0,...,m-1$
+
+本文压缩的方法是：希望将原本m个不同值的斜率缩减到t个不同的值，然后为这t个值构建一个数组$T[0, t-1]$，然后原来直接存储斜率slpoe的地方改为存储数组T中的地址，这样就能使得每个斜率被编码为$\lceil logt \rceil$个bit。在实验部分证明，这个压缩算法能保证$t\ll m$，因此压缩效率显著。
+
+算法的详细细节如下：
+
+1. 首先按照字典序对斜率区间进行排序（先按a排序，然后按b排序），得到数组$I$
+2. 然后对数组$I$进行扫描，以期最大化斜率区间的交集
+
+举个例子：对于排序后的斜率区间$\{(2,7), (3,6), (4,8), (7,9),...\}$，我们可以看出$\{(2,7), (3,6), (4,8)\}$这三个区间有交集$(4,6)$，而斜率区间$(7,9)$与前三个没有共同交集。因此，我们可以设置前三个段的斜率区间均为同一个区间$(4,6)$，这样就达到了压缩的目的。然后继续重复上述过程，直到扫描完所有的斜率区间。
+
+
+
+
+
+## 5 Distribution-aware PGM-Index
+
+本章主要介绍变体：分布感知的PGM-Index
+
+先前没有考虑过查询的分布，都是认为查询是均匀分布的，但在实际中，查询是斜偏分布的，这里，本文想实现一种索引，对经常执行的查询有更快的执行速度，比不经常被执行的查询快。
+
+定义分布感知的数据格式：$S=\{(k_i,p_i)\}_{i=1,..,n}$，其中$p_i$是查询$k_i$的概率。
+
+分布感知问题是：希望对$k_i$的查询时间为$O(log(1/p_i))$
+
+具体实现方案：
+
+对于不同查询概率的key，我们在训练Model的时候为其规定不同的误差，即$min(1/p_i,\varepsilon)$。简单理解一下，因为通过模型得到大概的pos后，还需要二分查找来最终确定，如果误差允许的范围大，则二分查找所需要的时间就长，相反，如果对于高频查询的key，将其允许的误差范围降低，则二分查找的就快。
+
+前面介绍的是如何构造分布感知的PLA-Model，下面介绍如何构造分布感知的PGM-Index，即**每一层**的都是分布感知的。
+定义q是一个段中最大查询概率，P是这个段中查询概率之和，然后q/P表示上一层中，这个段首个key的被查询概率。（“加权”思想）
+
+
+
+## 6 The Multicriteria PGM-Index
+
+本章主要介绍的变体：可以设置数据结构的参数，以调和其时间和空间性能，来应对不同的应用场景、设备
+
+
+
 
 
 ## 参考文献
