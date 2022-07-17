@@ -10,9 +10,8 @@
 
 ## 待读列表
 
-- [ ] Data Blocks: Hybrid OLTP and OLAP on Compressed Storage using both Vectorization and Compilation
-- [ ] Super-Scalar RAM-CPU Cache Compression
-- [ ] SIMD-Scan: Ultra Fast in-Memory Table Scan using on-Chip Vector Processing Units
+- [ ] [SIGMOD'16] Data Blocks: Hybrid OLTP and OLAP on Compressed Storage using both Vectorization and Compilation
+- [ ] [ICDE'06] Super-Scalar RAM-CPU Cache Compression
 - [ ] SIMD Compression and the Intersection of Sorted Integers
 
 
@@ -26,3 +25,4 @@
 - [SIGMOD'13] Bitweaving: Fast scans for main memory data processing
 - [SIGMOD'15] Rethinking SIMD Vectorization for In-Memory Databases 【部分】
 - [DaMoN'11] Vectorization vs. Compilation in Query Execution 【部分】
+- [VLDB'09] SIMD-Scan: Ultra Fast in-Memory Table Scan using on-Chip Vector Processing Units

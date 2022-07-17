@@ -17,7 +17,7 @@
 第一步看题目：
 
 - ROVEC是文章中提出的框架名字
-- Vectorized Expression Evaluation矢量化表达式求值，看到vectorized这个词，我想到的是本文用到了SIMD技术，Expression Evaluation一般是指数据库操作中的断言predicate的计算过程
+- Vectorized Expression Evaluation矢量化表达式求值，看到vectorized这个词，我想到的是本文用到了SIMD技术，Expression Evaluation一般是指数据库操作中的谓词predicate的计算过程
 - Column Store，列式存储，说明框架ROVEC面向的是列数据库
 
 
@@ -221,7 +221,7 @@ ROVEC并不限制所有的block都使用相同的压缩方案。**在进行优�
 
 8-12行：对于Add等功能性算子，其输出范围与其子节点的输出范围有关
 
-<img src="D:\Data\Blog\ROVEC\imgs\Snipaste_2022-07-07_12-33-14.png" style="zoom:50%;" />
+<img src=".\imgs\Snipaste_2022-07-07_12-33-14.png" style="zoom:50%;" />
 
 算法三对当前节点及其子节点更新输入输出范围。被用于算法一中发现某个节点确定需要进行类型缩减，还会递归去其子节点更新。
 
@@ -243,7 +243,7 @@ PolarDB-C的SQL语句执行模型采用的是经典的火山模型，即数据�
 
 后面，文章还介绍了如何应对Non-Element-Addressable Scheme的压缩方案，即如果压缩方案是元素不可寻址的，那么就需要首先对数据解压缩，然后再进行后续操作。
 
-![](D:\Data\Blog\ROVEC\imgs\Snipaste_2022-07-07_13-02-14.png)
+![](.\imgs\Snipaste_2022-07-07_13-02-14.png)
 
 最后再附一张系统架构图，可以看出ROVEC作为一个插件被集成到了数据库中，是非侵入性的。在数据库系统的执行层，可以直接与ROVEC提供的API交互。
 
